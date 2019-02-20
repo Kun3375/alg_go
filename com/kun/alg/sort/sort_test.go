@@ -10,6 +10,21 @@ func BenchmarkMergeSort(b *testing.B) {
 	prepare(MergeSort)
 }
 
+func BenchmarkQuickSort(b *testing.B) {
+	b.N = 100
+	prepare(QuickSort)
+}
+
+func BenchmarkQuickSort2Way(b *testing.B) {
+	b.N = 100
+	prepare(QuickSort2Way)
+}
+
+func BenchmarkQuickSort3Way(b *testing.B) {
+	b.N = 100
+	prepare(QuickSort3Way)
+}
+
 func BenchmarkSelectSort(b *testing.B) {
 	b.N = 100
 	prepare(SelectSort)

@@ -1,6 +1,8 @@
 package sort
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 func BubbleSort(slice []int) {
 
@@ -79,7 +81,7 @@ func mergeTwoPart(slice []int) {
 	}
 	temp := make([]int, end-start, end-start)
 	tempIndex, i, j := 0, start, mid
-	for ; i < mid && j < end; {
+	for i < mid && j < end {
 		if slice[i] < slice[j] {
 			temp[tempIndex] = slice[i]
 			tempIndex++
@@ -104,20 +106,97 @@ func mergeTwoPart(slice []int) {
 }
 
 func QuickSort(slice []int) {
-	midIndex := rand.Intn(len(slice))
-	slice[0], slice[midIndex] = slice[midIndex], slice[0]
-	quickSortCore(slice)
-}
-
-func quickSortCore(slice []int) {
-	if len(slice) < 1 {
+	if len(slice) < 2 {
 		return
 	}
-	midIndex := quickSortPartition()
-	quickSortCore(slice[:midIndex])
-	quickSortCore(slice[midIndex:])
+	midIndex := quickSortPartition(slice)
+	QuickSort(slice[:midIndex])
+	QuickSort(slice[midIndex+1:])
 }
 
-func quickSortPartition() int {
-	return 0
+func quickSortPartition(slice []int) int {
+	rIndex := rand.Intn(len(slice))
+	slice[0], slice[rIndex] = slice[rIndex], slice[0]
+
+	temp := slice[0]
+	i, j := 0, 1
+	for j < len(slice) {
+		if slice[j] < temp {
+			i++
+			slice[i], slice[j] = slice[j], slice[i]
+		}
+		j++
+	}
+
+	slice[0], slice[i] = slice[i], slice[0]
+	return i
+}
+
+func QuickSort2Way(slice []int) {
+	if len(slice) <= 16 {
+		InsertSort(slice)
+		return
+	}
+	midIndex := quickSort2WayPartition(slice)
+	QuickSort2Way(slice[:midIndex])
+	QuickSort2Way(slice[midIndex+1:])
+}
+
+func quickSort2WayPartition(slice []int) int {
+	rIndex := rand.Intn(len(slice))
+	slice[0], slice[rIndex] = slice[rIndex], slice[0]
+
+	temp := slice[0]
+	i, j := 1, len(slice)-1
+	for true {
+		for i < j && slice[i] < temp {
+			i++
+		}
+		for j > i && slice[j] > temp {
+			j--
+		}
+		if i >= j {
+			break
+		}
+		slice[i], slice[j] = slice[j], slice[i]
+		i++
+		j--
+	}
+	slice[0], slice[j] = slice[j], slice[0]
+	return j
+}
+
+func QuickSort3Way(slice []int) {
+	if len(slice) < 16 {
+		InsertSort(slice)
+		return
+	}
+
+	eq, lt := quickSort3WayPartition(slice)
+	QuickSort3Way(slice[lt:])
+	QuickSort3Way(slice[:eq])
+}
+
+func quickSort3WayPartition(slice []int) (int, int) {
+	rIndex := rand.Intn(len(slice))
+	slice[0], slice[rIndex] = slice[rIndex], slice[0]
+
+	i, e, j := 1, 1, len(slice)
+	for i < j {
+		if slice[0] > slice[i] {
+			slice[e], slice[i] = slice[i], slice[e]
+			e++
+			i++
+			continue
+		}
+		if slice[0] < slice[i] {
+			j--
+			slice[j], slice[i] = slice[i], slice[j]
+			continue
+		}
+		i++
+	}
+	e--
+	slice[0], slice[e] = slice[e], slice[0]
+	return e, j
 }
